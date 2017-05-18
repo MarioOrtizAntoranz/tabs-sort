@@ -1,0 +1,169 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>tabs demo</title>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+</head>
+<body>
+ 
+<div id="tabs">
+  <ul>
+    <li id="tab1"><a href="#fragment-1"><span>Sports</span></a></li>
+    <li id="tab2"><a href="#fragment-2"><span>Casino</span></a></li>
+    <li id="tab3"><a href="#fragment-3"><span>Bingo</span></a></li>
+    <li id="tab4"><a href="#fragment-4"><span>All</span></a></li>
+    <li id="tab5"><a href="#fragment-5"><span>Add</span></a></li>
+  </ul>  
+  
+  <div id="fragment-1">
+    <h1>Sports</h1>
+  </div>
+  
+  <div id="fragment-2">
+    <h1>Casino</h1>
+  </div>
+  
+  <div id="fragment-3">
+    <h1>Bingo</h1>
+  </div>
+ 
+  <div id="fragment-4">
+    <h1>All</h1>
+  </div> 
+  
+  <div id="fragment-5">
+    <h1>Add</h1>
+  </div>
+        
+</div>
+
+<script type='text/javascript'>
+    
+$(document).ready(function () {  
+
+// load xml content
+ $.ajax({
+    type: "GET",
+    url: "mydata.xml",
+    dataType: "xml",
+ 
+}).done( 
+// process xml data after loading
+function(xml, textStatus, jqXHR) {
+
+var results = []; 
+var resultsb = []; 
+
+ // Assign  variables to conent, convert to html and filter it for each tab  
+    $(xml).find('item').each(function() { 
+    
+    var desc = $(this).find('desc').text(),
+        item = $(this),
+        category = $(this).find('category').text(),
+        title = $(this).find('title').text();     
+     
+    var html = '<dd>';
+        html += '<p><div> Title: ' + title + '</div>';
+        html += '<div> Category ' + category + '</div>';
+        html += '<div> Description: ' + desc + '</div></p>';
+        html += '</dd>'; 
+
+
+         if (category == 1 ) {         
+           item.find('category').each(function () {        
+           	 $('#fragment-1').append(html);        
+            });                         
+            };  
+            
+         if (category == 2 ) {         
+           item.find('category').each(function () {        
+           	 $('#fragment-2').append(html);         
+            });                         
+            };    
+            
+        if (category == 3 ) {         
+           item.find('category').each(function () {        
+           	 $('#fragment-3').append(html);         
+            });                         
+            };  
+                             
+        if (category == 1 || category == 2) {         
+           item.find('category').each(function () {        
+           	 $('#fragment-5').append(html);         
+            });                         
+            };                   
+ 
+
+ // insert data into two arrays to sort ascending and descending 
+ pushArrayResults(results);
+ pushArrayResults(resultsb);
+ 
+  function pushArrayResults(myelement) {
+  
+        myelement.push({
+        titl : title,
+        descript: desc,
+        category: category
+        });
+       if (myelement == results){
+        myelement.sort(function(a, b) {
+            return a.category - b.category; 
+        }); 
+        }; 
+  	   if (myelement == resultsb){
+        myelement.sort(function(a, b) {
+            return b.category - a.category; 
+        }); 
+        }; 
+  }       
+   
+});
+//end each find item
+
+
+// detect latest tab clicked
+ $( "#tabs" ).tabs({
+     activate: function( event, ui ) {
+            var latestTab = ui.oldTab.index();                      
+            myLastTab(latestTab);            
+      }
+}); 
+
+
+function myLastTab(latestTab){
+
+var htmlarr = [];
+
+if (latestTab == 0) {
+xmlorder(resultsb);
+}
+if (latestTab == 1 || latestTab == 2 ){
+xmlorder(results);
+}
+
+function xmlorder(paramxml){
+	$.each(paramxml, function() {
+    htmlarr.push(
+    '<dd>' +
+    '<p><div>Title: ' + this.titl + '</div>' +
+    '<div>Category: ' + this.category + '</div>' +
+    '<div>Description: ' + this.descript + '</div></p></dd>'
+    )
+    
+});
+$("#fragment-4").html(htmlarr.join(''));
+}
+
+}
+});
+// done
+});
+// doc ready         
+</script>
+
+</body>
+</html>
