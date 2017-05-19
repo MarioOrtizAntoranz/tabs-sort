@@ -7,4 +7,5 @@ If Casino or Bingo, the order in ALL tab will be ascending.
 Languages used:
 
 1- jQuery
+
 2- Ajax
